@@ -47,8 +47,7 @@ public class Launcher {
         IDLE,
         SPIN_UP,
         LAUNCH,
-        LAUNCHING,
-        END_LAUNCH
+        LAUNCHING
     }
 
     private LaunchState launchState;
@@ -111,18 +110,14 @@ public class Launcher {
             case LAUNCHING:
                 if (stateTimer.seconds() > FEED_TIME_SECONDS ) {
                     if(shotsRemaining == 0){
-                        launchState = LaunchState.END_LAUNCH;
+                        launchState = LaunchState.IDLE;
+                        leftFeeder.setPower(STOP_SPEED);
+                        rightFeeder.setPower(STOP_SPEED);
+                        launcher.setVelocity(0);
                     } else {
                         launchState = LaunchState.SPIN_UP;
                     }
                 }
-                break;
-
-            case END_LAUNCH:
-                launchState = LaunchState.IDLE;
-                leftFeeder.setPower(STOP_SPEED);
-                rightFeeder.setPower(STOP_SPEED);
-                launcher.setVelocity(0);
                 break;
         }
     }
