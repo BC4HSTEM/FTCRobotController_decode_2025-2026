@@ -23,10 +23,11 @@ public class Launcher {
         this.hwMap = hwMap;
     }
 
-    public static double FEED_TIME_SECONDS = 0.20; //The feeder servos run this long when a shot is requested.
+    public static double FEED_TIME_SECONDS = 1.0; //The feeder servos run this long when a shot is requested.
     public static double STOP_SPEED = 0.0; //We send this power to the servos when we want them to stop.
     public static double FULL_SPEED = 1.0;
 
+    // Robot Starts close, in front of Goal
     public static double LAUNCHER_TARGET_VELOCITY = 1625;
     public static double LAUNCHER_MIN_VELOCITY = 1275;
 
@@ -47,6 +48,7 @@ public class Launcher {
         SPIN_UP,
         LAUNCH,
         LAUNCHING,
+        END_LAUNCH
     }
 
     private LaunchState launchState;
@@ -109,14 +111,18 @@ public class Launcher {
             case LAUNCHING:
                 if (stateTimer.seconds() > FEED_TIME_SECONDS ) {
                     if(shotsRemaining == 0){
-                        launchState = LaunchState.IDLE;
-                        leftFeeder.setPower(STOP_SPEED);
-                        rightFeeder.setPower(STOP_SPEED);
-                        launcher.setVelocity(0);
+                        launchState = LaunchState.END_LAUNCH;
                     } else {
                         launchState = LaunchState.SPIN_UP;
                     }
                 }
+                break;
+
+            case END_LAUNCH:
+                launchState = LaunchState.IDLE;
+                leftFeeder.setPower(STOP_SPEED);
+                rightFeeder.setPower(STOP_SPEED);
+                launcher.setVelocity(0);
                 break;
         }
     }
