@@ -22,7 +22,7 @@ public class Launcher {
     private HardwareMap hwMap;
 
     // Constructor to receive the Telemetry and HardwareMap objects
-    // A Constructor is called when the class
+    // A Constructor is called when an object of a class is created
     public Launcher(Telemetry telemetry, HardwareMap hwMap) {
         this.telemetry = telemetry;
         this.hwMap = hwMap;

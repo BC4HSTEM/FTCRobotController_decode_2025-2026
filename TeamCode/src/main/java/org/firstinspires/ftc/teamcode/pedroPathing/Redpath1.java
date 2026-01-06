@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -39,7 +39,7 @@ public class Redpath1 extends OpMode {
     /** Setup variables for timers used to track actions - IF NEEDED, no currently using */
     private Timer pathTimer, actionTimer, opModeTimer;
 
-    // TODO : Update the pose coordinate and heading values based on Izeyah and Majesty's work
+    /* TODO : Update the pose coordinate and heading values based on Izeyah and Majesty's work */
     /** Set up variables for the poses : Left, Right, Heading (degrees to radians */
     private final Pose startPose = new Pose(123.597, 122.500, Math.toRadians(45));
     private final Pose scorePose = new Pose(84.822, 84.164, Math.toRadians(45));
@@ -69,6 +69,7 @@ public class Redpath1 extends OpMode {
             case DRIVE_STARTPOS_SHOOT_POS:
                 follower.followPath(driveStartPosShootPos, true);
                 setPathState(PathState.SHOOT_PRELOAD);
+                telemetry.addLine("Driving to the shoot position.");
                 break;
             case SHOOT_PRELOAD:
                 if (!follower.isBusy()) {
@@ -76,12 +77,13 @@ public class Redpath1 extends OpMode {
                     if(!shotsTriggered){
                         shooter.fireShots(3);
                         shotsTriggered = true;
-                        telemetry.addLine("Done Path 1");
+                        telemetry.addLine("Call launcher to start shooting the preloads.");
                     }
                     else if (shotsTriggered && !shooter.isBusy()){
                         // shots are done, transition
                         follower.followPath(driveShootPosToEndPos, true);
                         setPathState(PathState.DRIVE_SHOOTPOS_ENDPOS);
+                        telemetry.addLine("Launching complete. Start driving to the end pose.");
                     }
                 }
                 break;
@@ -92,7 +94,7 @@ public class Redpath1 extends OpMode {
                 }
                 break;
             default:
-                telemetry.addLine("No State Commander");
+                telemetry.addLine("No State.");
                 break;
 
         }
