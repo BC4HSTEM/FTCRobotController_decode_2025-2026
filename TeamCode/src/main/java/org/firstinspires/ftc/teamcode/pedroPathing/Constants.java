@@ -10,8 +10,13 @@ import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+/* TUNING
+*  https://pedropathing.com/docs/pathing/tuning/setup
+*  https://pedropathing.com/docs/pathing/tuning/localization/drive-encoder */
+
 public class Constants {
-    public static FollowerConstants followerConstants = new FollowerConstants();
+    public static FollowerConstants followerConstants = new FollowerConstants()
+            .mass(5); /* TODO: set robot mass */
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
