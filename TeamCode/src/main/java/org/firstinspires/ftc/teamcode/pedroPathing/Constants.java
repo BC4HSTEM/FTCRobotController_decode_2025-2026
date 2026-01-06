@@ -27,8 +27,8 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
 
     public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
-            //@TODO .robotLength()
-            //@TODO .robotWidth()
+            .robotLength(16) /* TODO: set robot length */
+            .robotWidth(16) /* TODO: set robot width */
             .rightFrontMotorName("FR")
             .rightRearMotorName("BR")
             .leftRearMotorName("BL")

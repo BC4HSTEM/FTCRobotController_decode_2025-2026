@@ -17,30 +17,40 @@ import org.firstinspires.ftc.teamcode.mechanisms.Launcher;
 @Autonomous (name = "Red Path 1", group = "Red")
 public class Redpath1 extends OpMode {
 
+    /** This is the enum where we store the state of our auto.
+     * It is used by the pathUpdate method. */
     public enum PathState {
         DRIVE_STARTPOS_SHOOT_POS,
         SHOOT_PRELOAD,
         DRIVE_SHOOTPOS_ENDPOS
     }
-
-
-    // Launcher Setup
-    private Launcher shooter;
-    private boolean shotsTriggered = false;
-
-    private Follower follower;
-    private Timer pathTimer, actionTimer, opModeTimer;
-
+    /** Create an instance of the enum with a variable to track the path state */
     private PathState pathState;
 
-    private final Pose startPose = new Pose(129.054, 127.631, Math.toRadians(31));
-    private final Pose scorePose = new Pose(78.049, 76.863, Math.toRadians(45));
-    private final Pose endPose = new Pose(23.723, 96.554, Math.toRadians(45));
+    /** Launcher Setup */
+    private Launcher shooter;
 
-    private PathChain driveStartPosShootPos;
-    private PathChain driveShootPosToEndPos;
+    /** Variable to track the number of triggered shots*/
+    private boolean shotsTriggered = false;
+
+    /** Setup pedro pathing follower */
+    private Follower follower;
+
+    /** Setup variables for timers used to track actions - IF NEEDED, no currently using */
+    private Timer pathTimer, actionTimer, opModeTimer;
+
+    // TODO : Update the pose coordinate and heading values based on Izeyah and Majesty's work
+    /** Set up variables for the poses : Left, Right, Heading (degrees to radians */
+    private final Pose startPose = new Pose(123.597, 122.500, Math.toRadians(45));
+    private final Pose scorePose = new Pose(84.822, 84.164, Math.toRadians(45));
+    private final Pose endPose = new Pose(85.918, 102.575, Math.toRadians(45));
+
+    /** Setup the PathChains for each "set or group" of movements */
+    private PathChain driveStartPosShootPos; // Drive from the start position to the shoot position
+    private PathChain driveShootPosToEndPos; // Drive from the shoot Position to the end position
 
     public void buildPaths() {
+
         // coordinates for starting pose > shoot pose
         driveStartPosShootPos = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, scorePose))
@@ -88,12 +98,15 @@ public class Redpath1 extends OpMode {
         }
     }
 
+    /* Method to set the pathstate, reset the timer, */
     public void setPathState(PathState newState) {
         pathState = newState;
         pathTimer.resetTimer();
         shotsTriggered = false;
     }
 
+
+    /* This method overrides the FTC code for init */
     @Override
     public void init() {
         pathState = PathState.DRIVE_STARTPOS_SHOOT_POS;
@@ -106,7 +119,7 @@ public class Redpath1 extends OpMode {
         // Combine the default driver station telemetry with the FTC Dashboard telemetry
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        //TODO add in any other init mechanisms
+        // TODO add in any other init mechanisms
         shooter = new Launcher(telemetry, hardwareMap);
         shooter.init();
 
@@ -115,11 +128,16 @@ public class Redpath1 extends OpMode {
     }
 
 
+    /* This method overrides the FTC code for start (executes once when you press start.
+    *  Here we are setting the pathState and the timer */
     public void start() {
         opModeTimer.resetTimer();
         setPathState(pathState);
     }
 
+    /* This method overrides the FTC code for loop (after hitting play)
+    *  Here we are updating the follower, shooter, and statePathUpdate so they execute on each loop
+    *  as well as outputting telemetry. */
     @Override
     public void loop() {
         follower.update();
