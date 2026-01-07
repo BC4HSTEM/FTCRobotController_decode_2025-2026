@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 *  https://pedropathing.com/docs/pathing/tuning/localization/drive-encoder */
 
 public class Constants {
-    public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(5); /* TODO: set robot mass */
+    public static FollowerConstants followerConstants = new FollowerConstants();
+            // .mass(5); /* TODO: set robot mass */
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
@@ -32,8 +32,8 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
 
     public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
-            .robotLength(16) /* TODO: set robot length */
-            .robotWidth(16) /* TODO: set robot width */
+            .robotLength(17.75) /* TODO: set robot length */
+            .robotWidth(17.75) /* TODO: set robot width */
             .rightFrontMotorName("FR")
             .rightRearMotorName("BR")
             .leftRearMotorName("BL")
