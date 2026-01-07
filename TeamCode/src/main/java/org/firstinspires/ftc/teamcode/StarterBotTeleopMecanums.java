@@ -80,6 +80,9 @@ public class StarterBotTeleopMecanums extends OpMode {
     public static double LAUNCHER_TARGET_VELOCITY = 1625;
     public static double LAUNCHER_MIN_VELOCITY = 1575;
 
+    public static double CLOSE_LAUNCHER_TARGET_VELOCITY = 1500;
+    public static double CLOSE_LAUNCHER_MIN_VELOCITY = 1400;
+
     // Declare OpMode members.
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -88,6 +91,7 @@ public class StarterBotTeleopMecanums extends OpMode {
     private DcMotorEx launcher = null;
     private CRServo leftFeeder = null;
     private CRServo rightFeeder = null;
+
 
     ElapsedTime feederTimer = new ElapsedTime();
 
