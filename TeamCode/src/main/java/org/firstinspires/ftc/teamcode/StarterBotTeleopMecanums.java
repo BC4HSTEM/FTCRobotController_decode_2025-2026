@@ -74,9 +74,11 @@ public class StarterBotTeleopMecanums extends OpMode {
      * to read the current speed of the motor and apply more or less power to keep it at a constant
      * velocity. Here we are setting the target, and minimum velocity that the launcher should run
      * at. The minimum velocity is a threshold for determining when to fire.
+     * Far launch zone. Record "target velocity is 1950""min velocioty is 1910"
+     * short launch zone"target velocity 1625""min velocity is 1275"
      */
     public static double LAUNCHER_TARGET_VELOCITY = 1625;
-    public static double LAUNCHER_MIN_VELOCITY = 1275;
+    public static double LAUNCHER_MIN_VELOCITY = 1575;
 
     // Declare OpMode members.
     private DcMotor leftFrontDrive = null;
