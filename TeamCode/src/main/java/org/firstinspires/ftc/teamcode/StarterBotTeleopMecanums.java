@@ -77,11 +77,14 @@ public class StarterBotTeleopMecanums extends OpMode {
      * Far launch zone. Record "target velocity is 1950""min velocioty is 1910"
      * short launch zone"target velocity 1625""min velocity is 1275"
      */
-    public static double LAUNCHER_TARGET_VELOCITY = 1625;
-    public static double LAUNCHER_MIN_VELOCITY = 1575;
+    public static double MID_LAUNCHER_TARGET_VELOCITY = 1625;
+    public static double MID_LAUNCHER_MIN_VELOCITY = 1575;
 
     public static double CLOSE_LAUNCHER_TARGET_VELOCITY = 1500;
     public static double CLOSE_LAUNCHER_MIN_VELOCITY = 1400;
+
+    public static double launcherMinVelocity = MID_LAUNCHER_MIN_VELOCITY;
+    public static double launcherTargetVelocity = MID_LAUNCHER_TARGET_VELOCITY;
 
     // Declare OpMode members.
     private DcMotor leftFrontDrive = null;
@@ -91,6 +94,9 @@ public class StarterBotTeleopMecanums extends OpMode {
     private DcMotorEx launcher = null;
     private CRServo leftFeeder = null;
     private CRServo rightFeeder = null;
+
+    private boolean rightBumperPressed = false;
+    private boolean leftBumperPressed = false;
 
 
     ElapsedTime feederTimer = new ElapsedTime();
@@ -234,7 +240,7 @@ public class StarterBotTeleopMecanums extends OpMode {
          * queuing a shot.
          */
         if (gamepad1.y) {
-            launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
+            launcher.setVelocity(launcherTargetVelocity);
         } else if (gamepad1.b) { // stop flywheel
             launcher.setVelocity(STOP_SPEED);
         }
@@ -242,7 +248,36 @@ public class StarterBotTeleopMecanums extends OpMode {
         /*
          * Now we call our "Launch" function.
          */
-        launch(gamepad1.right_bumper);
+         // launch(MID_LAUNCHER_TARGET_VELOCITY, MID_LAUNCHER_MIN_VELOCITY, gamepad1.right_bumper);
+
+        /*
+        if (gamepad1.right_bumper && !rightBumperPressed){
+            launch(MID_LAUNCHER_TARGET_VELOCITY, MID_LAUNCHER_MIN_VELOCITY,gamepad1.right_bumper);
+            rightBumperPressed = true;
+        } else {
+            rightBumperPressed = false;
+        }
+
+        if (gamepad1.left_bumper && !leftBumperPressed){
+            launch(CLOSE_LAUNCHER_TARGET_VELOCITY, CLOSE_LAUNCHER_MIN_VELOCITY,gamepad1.left_bumper);
+            leftBumperPressed = true;
+        } else {
+            leftBumperPressed = false;
+        }
+
+        */
+        if (gamepad1.right_bumper){
+            launch(MID_LAUNCHER_TARGET_VELOCITY, MID_LAUNCHER_MIN_VELOCITY,gamepad1.right_bumper);
+            launcherMinVelocity = MID_LAUNCHER_MIN_VELOCITY;
+            launcherTargetVelocity = MID_LAUNCHER_TARGET_VELOCITY;
+        }
+        else if (gamepad1.left_bumper){
+            launch(CLOSE_LAUNCHER_TARGET_VELOCITY, CLOSE_LAUNCHER_MIN_VELOCITY, gamepad1.left_bumper);
+            launcherMinVelocity = CLOSE_LAUNCHER_MIN_VELOCITY;
+            launcherTargetVelocity = CLOSE_LAUNCHER_MIN_VELOCITY;
+        } else {
+            launch(launcherTargetVelocity, launcherMinVelocity, false);
+        }
 
         /*
          * Show the state and motor powers
@@ -279,7 +314,7 @@ public class StarterBotTeleopMecanums extends OpMode {
 
     }
 
-    void launch(boolean shotRequested) {
+    void launch(double targetVelocity, double minVelocity, boolean shotRequested) {
         switch (launchState) {
             case IDLE:
                 if (shotRequested) {
@@ -287,8 +322,8 @@ public class StarterBotTeleopMecanums extends OpMode {
                 }
                 break;
             case SPIN_UP:
-                launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
-                if (launcher.getVelocity() > LAUNCHER_MIN_VELOCITY) {
+                launcher.setVelocity(targetVelocity);
+                if (launcher.getVelocity() > minVelocity) {
                     launchState = LaunchState.LAUNCH;
                 }
                 break;
@@ -298,8 +333,8 @@ public class StarterBotTeleopMecanums extends OpMode {
                 feederTimer.reset();
                 launchState = LaunchState.LAUNCHING;
                 telemetry.addData("launch speed",launcher.getVelocity());
-                telemetry.addData("launch speed target",LAUNCHER_TARGET_VELOCITY);
-                telemetry.addData("launcher speed min",LAUNCHER_MIN_VELOCITY);
+                telemetry.addData("launch speed target",targetVelocity);
+                telemetry.addData("launcher speed min",minVelocity);
 
                 telemetry.update();
                 break;
