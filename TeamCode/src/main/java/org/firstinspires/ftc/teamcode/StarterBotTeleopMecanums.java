@@ -247,24 +247,8 @@ public class StarterBotTeleopMecanums extends OpMode {
 
         /*
          * Now we call our "Launch" function.
-         */
-         // launch(MID_LAUNCHER_TARGET_VELOCITY, MID_LAUNCHER_MIN_VELOCITY, gamepad1.right_bumper);
-
-        /*
-        if (gamepad1.right_bumper && !rightBumperPressed){
-            launch(MID_LAUNCHER_TARGET_VELOCITY, MID_LAUNCHER_MIN_VELOCITY,gamepad1.right_bumper);
-            rightBumperPressed = true;
-        } else {
-            rightBumperPressed = false;
-        }
-
-        if (gamepad1.left_bumper && !leftBumperPressed){
-            launch(CLOSE_LAUNCHER_TARGET_VELOCITY, CLOSE_LAUNCHER_MIN_VELOCITY,gamepad1.left_bumper);
-            leftBumperPressed = true;
-        } else {
-            leftBumperPressed = false;
-        }
-
+         * Left Bumper: CLOSE TO GOAL launch position
+         * Right Bumper: MID FIELD launch position
         */
         if (gamepad1.right_bumper){
             launch(MID_LAUNCHER_TARGET_VELOCITY, MID_LAUNCHER_MIN_VELOCITY,gamepad1.right_bumper);
