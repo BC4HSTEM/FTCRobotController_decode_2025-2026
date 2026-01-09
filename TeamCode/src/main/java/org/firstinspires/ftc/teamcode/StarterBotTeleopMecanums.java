@@ -62,7 +62,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Config
-@TeleOp(name = "GoBilda Decode Starter Bot", group = "StarterBot")
+@TeleOp(name = "GoBilda Decode Starter Bot")
 //@Disabled
 public class StarterBotTeleopMecanums extends OpMode {
     public static double FEED_TIME_SECONDS = 0.20; //The feeder servos run this long when a shot is requested.

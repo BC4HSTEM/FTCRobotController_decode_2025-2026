@@ -27,12 +27,12 @@ public class AutoDriveForwardOneSecond extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Drive forward at 50% power
-            FL.setPower(0.5);
-            FR.setPower(0.5);
-            BL.setPower(0.5);
-            BR.setPower(0.5);
+            FL.setPower(0.2);
+            FR.setPower(0.2);
+            BL.setPower(0.2);
+            BR.setPower(0.2);
 
-            sleep(1000); // 1 second
+            sleep(700); // 1 second
 
             // Stop all motors
             FL.setPower(0);
