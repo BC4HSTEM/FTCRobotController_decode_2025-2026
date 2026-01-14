@@ -1,13 +1,34 @@
 package org.firstinspires.ftc.teamcode;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-@Autonomous(name = "Drive Forward 1 Second", group = "Autonomous")
-public class AutoDriveForwardOneSecond extends LinearOpMode {
+import org.firstinspires.ftc.teamcode.mechanisms.Launcher;
+
+import java.util.Set;
+
+@Config
+@Autonomous(name = "Near shot", group = "Autonomous")
+public class AutoShootNear extends LinearOpMode {
 
     private DcMotor FL, FR, BL, BR;
+    private DcMotorEx launcher = null;
+    private CRServo leftFeeder = null;
+    private CRServo rightFeeder = null;
+    public static double targetVelocity;
+    public static double minVelocity;
+
+    private Launcher shooter;
 
     @Override
     public void runOpMode() {
@@ -22,19 +43,89 @@ public class AutoDriveForwardOneSecond extends LinearOpMode {
         FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);
 
+        //set up launchers
+         launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+         launcher.setZeroPowerBehavior(BRAKE);
+         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,new PIDFCoefficients(300, 0, 0, 10));
+         leftFeeder = hardwareMap.get(CRServo.class,"grabber_left");
+         rightFeeder = hardwareMap.get(CRServo.class, "grabber_right");
+         leftFeeder.setPower(0);
+         rightFeeder.setPower(0);
+
+         shooter = new Launcher(telemetry, hardwareMap);
+         shooter.init();
+
+         targetVelocity = 1600;
+
+telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
+
         waitForStart();
 
         if (opModeIsActive()) {
 
-            // Drive forward at 50% power
-            FL.setPower(0.2);
-            FR.setPower(0.2);
-            BL.setPower(0.2);
-            BR.setPower(0.2);
+            // Drive backward at 50% power
+            FL.setPower(-0.2);
+            FR.setPower(-0.2);
+            BL.setPower(-0.2);
+            BR.setPower(-0.2);
 
-            sleep(700); // 1 second
+            sleep(4000); // 1 second
 
             // Stop all motors
+            FL.setPower(0);
+            FR.setPower(0);
+            BL.setPower(0);
+            BR.setPower(0);
+
+            //launch first ball
+            launcher.setVelocity(targetVelocity);
+            sleep(1000);
+            leftFeeder.setPower(1.0);
+            rightFeeder.setPower(1.0);
+            sleep(700);
+            leftFeeder.setPower(0);
+            rightFeeder.setPower(0);
+
+            telemetry.addData("launch state","start launch");
+            telemetry.update();
+
+            //launch second ball
+            sleep(1000);
+            leftFeeder.setPower(1.0);
+            rightFeeder.setPower(1.0);
+            sleep(700);
+            leftFeeder.setPower(0);
+            rightFeeder.setPower(0);
+
+            //shooter.fireShots(3);
+            //shooter.update();
+
+
+            //launch third ball
+            sleep(3000);
+            leftFeeder.setPower(1.0);
+            rightFeeder.setPower(1.0);
+            sleep(700);
+            leftFeeder.setPower(0);
+            rightFeeder.setPower(0);
+            sleep(700);
+            launcher.setVelocity(0);
+
+            sleep(3000);
+
+            telemetry.addData("launch state","stop launch");
+            telemetry.update();
+
+            //drive to the left
+            FL.setPower(-0.2);
+            FR.setPower(0.2);
+            BL.setPower(0.2);
+            BR.setPower(-0.2);
+
+            sleep(3000);
+
+            //stop all motor
             FL.setPower(0);
             FR.setPower(0);
             BL.setPower(0);
