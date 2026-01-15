@@ -27,6 +27,9 @@ public class AutoShootNear extends LinearOpMode {
     private CRServo rightFeeder = null;
     public static double targetVelocity;
     public static double minVelocity;
+    public static double drivePower;
+    public static int feederTime;
+    public static int feederPause;
 
     private Launcher shooter;
 
@@ -42,6 +45,7 @@ public class AutoShootNear extends LinearOpMode {
         // Reverse left side motors (standard mecanum setup)
         FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);
+        drivePower = 0.2;
 
         //set up launchers
          launcher = hardwareMap.get(DcMotorEx.class, "launcher");
@@ -52,11 +56,13 @@ public class AutoShootNear extends LinearOpMode {
          rightFeeder = hardwareMap.get(CRServo.class, "grabber_right");
          leftFeeder.setPower(0);
          rightFeeder.setPower(0);
+         feederTime = 1000;
+         feederPause = 250;
 
          shooter = new Launcher(telemetry, hardwareMap);
          shooter.init();
 
-         targetVelocity = 1600;
+         targetVelocity = 1496;
 
 telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
 
@@ -65,12 +71,12 @@ telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTeleme
         if (opModeIsActive()) {
 
             // Drive backward at 50% power
-            FL.setPower(-0.2);
-            FR.setPower(-0.2);
-            BL.setPower(-0.2);
-            BR.setPower(-0.2);
+            FL.setPower(-drivePower);
+            FR.setPower(-drivePower);
+            BL.setPower(-drivePower);
+            BR.setPower(-drivePower);
 
-            sleep(4000); // 1 second
+            sleep(2050); // 2 second
 
             // Stop all motors
             FL.setPower(0);
@@ -78,12 +84,14 @@ telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTeleme
             BL.setPower(0);
             BR.setPower(0);
 
-            //launch first ball
+            // start flywheel
             launcher.setVelocity(targetVelocity);
+
+            // launch first ball
             sleep(1000);
             leftFeeder.setPower(1.0);
             rightFeeder.setPower(1.0);
-            sleep(700);
+            sleep(feederTime);
             leftFeeder.setPower(0);
             rightFeeder.setPower(0);
 
@@ -91,25 +99,23 @@ telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTeleme
             telemetry.update();
 
             //launch second ball
-            sleep(1000);
+            sleep(feederPause);
             leftFeeder.setPower(1.0);
             rightFeeder.setPower(1.0);
-            sleep(700);
+            sleep(feederTime);
             leftFeeder.setPower(0);
             rightFeeder.setPower(0);
-
-            //shooter.fireShots(3);
-            //shooter.update();
-
 
             //launch third ball
-            sleep(3000);
+            sleep(feederPause);
             leftFeeder.setPower(1.0);
             rightFeeder.setPower(1.0);
-            sleep(700);
+            sleep(feederTime);
             leftFeeder.setPower(0);
             rightFeeder.setPower(0);
             sleep(700);
+
+            // stop flywheel
             launcher.setVelocity(0);
 
             sleep(3000);
@@ -117,19 +123,6 @@ telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTeleme
             telemetry.addData("launch state","stop launch");
             telemetry.update();
 
-            //drive to the left
-            FL.setPower(-0.2);
-            FR.setPower(0.2);
-            BL.setPower(0.2);
-            BR.setPower(-0.2);
-
-            sleep(3000);
-
-            //stop all motor
-            FL.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-            BR.setPower(0);
         }
     }
 }
