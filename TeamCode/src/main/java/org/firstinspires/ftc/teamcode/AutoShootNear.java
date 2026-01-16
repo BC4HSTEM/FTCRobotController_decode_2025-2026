@@ -63,6 +63,7 @@ public class AutoShootNear extends LinearOpMode {
          shooter.init();
 
          targetVelocity = 1496;
+         minVelocity=1446;
 
 telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
 
@@ -89,30 +90,19 @@ telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTeleme
 
             // launch first ball
             sleep(1000);
-            leftFeeder.setPower(1.0);
-            rightFeeder.setPower(1.0);
-            sleep(feederTime);
-            leftFeeder.setPower(0);
-            rightFeeder.setPower(0);
-
+            setLauncher(1.0, 1.0);
             telemetry.addData("launch state","start launch");
             telemetry.update();
 
             //launch second ball
             sleep(feederPause);
-            leftFeeder.setPower(1.0);
-            rightFeeder.setPower(1.0);
-            sleep(feederTime);
-            leftFeeder.setPower(0);
-            rightFeeder.setPower(0);
+            setLauncher(1.0, 1.0);
 
             //launch third ball
             sleep(feederPause);
-            leftFeeder.setPower(1.0);
-            rightFeeder.setPower(1.0);
-            sleep(feederTime);
-            leftFeeder.setPower(0);
-            rightFeeder.setPower(0);
+           setLauncher(1.0, 1.0);
+
+
             sleep(700);
 
             // stop flywheel
@@ -123,6 +113,18 @@ telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTeleme
             telemetry.addData("launch state","stop launch");
             telemetry.update();
 
+        }
+    }
+
+    private void setLauncher(double lFeederPower, double rFeederPower){
+
+        //launch third ball
+        if (launcher.getVelocity() > minVelocity) {
+            leftFeeder.setPower(lFeederPower);
+            rightFeeder.setPower(rFeederPower);
+            sleep(feederTime);
+            leftFeeder.setPower(0);
+            rightFeeder.setPower(0);
         }
     }
 }
