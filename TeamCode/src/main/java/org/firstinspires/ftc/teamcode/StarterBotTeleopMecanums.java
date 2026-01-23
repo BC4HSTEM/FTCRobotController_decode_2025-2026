@@ -37,6 +37,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -65,6 +66,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name = "GoBilda Decode Starter Bot")
 //@Disabled
 public class StarterBotTeleopMecanums extends OpMode {
+    RevBlinkinLedDriver blinkinLedDriver;
+    RevBlinkinLedDriver.BlinkinPattern pattern;
     public static double FEED_TIME_SECONDS = 0.20; //The feeder servos run this long when a shot is requested.
     public static double STOP_SPEED = 0.0; //We send this power to the servos when we want them to stop.
     public static double FULL_SPEED = 1.0;
@@ -139,6 +142,11 @@ public class StarterBotTeleopMecanums extends OpMode {
     public void init() {
         launchState = LaunchState.IDLE;
         telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
+
+
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        pattern = RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES;
+        blinkinLedDriver.setPattern(pattern);
         /*
          * Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
@@ -309,6 +317,8 @@ public class StarterBotTeleopMecanums extends OpMode {
                 launcher.setVelocity(targetVelocity);
                 if (launcher.getVelocity() > minVelocity) {
                         launchState = LaunchState.LAUNCH;
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                        blinkinLedDriver.setPattern(pattern);
                 }
                 break;
             case LAUNCH:
@@ -327,6 +337,8 @@ public class StarterBotTeleopMecanums extends OpMode {
                     launchState = LaunchState.IDLE;
                     leftFeeder.setPower(STOP_SPEED);
                     rightFeeder.setPower(STOP_SPEED);
+                    pattern = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
+                    blinkinLedDriver.setPattern(pattern);
                 }
                 break;
         }

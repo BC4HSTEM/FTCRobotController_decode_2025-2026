@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class AutoDriveForwardOneSecond extends LinearOpMode {
 
     private DcMotor FL, FR, BL, BR;
+
+    RevBlinkinLedDriver blinkinLedDriver;
+    RevBlinkinLedDriver.BlinkinPattern pattern;
 
     @Override
     public void runOpMode() {
@@ -21,6 +25,16 @@ public class AutoDriveForwardOneSecond extends LinearOpMode {
         // Reverse left side motors (standard mecanum setup)
         FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);
+
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+
+        if(gamepad1.x){
+            pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+            blinkinLedDriver.setPattern(pattern);
+        } else if (gamepad1.x) {
+            pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+            blinkinLedDriver.setPattern(pattern);
+        }
 
         waitForStart();
 

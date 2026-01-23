@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -20,7 +21,8 @@ import java.util.Set;
 @Config
 @Autonomous(name = "Near shot", group = "Autonomous")
 public class AutoShootNear extends LinearOpMode {
-
+    RevBlinkinLedDriver blinkinLedDriver;
+    RevBlinkinLedDriver.BlinkinPattern pattern;
     private DcMotor FL, FR, BL, BR;
     private DcMotorEx launcher = null;
     private CRServo leftFeeder = null;
@@ -65,7 +67,17 @@ public class AutoShootNear extends LinearOpMode {
          targetVelocity = 1496;
          minVelocity=1446;
 
-telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
+         telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
+
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+
+        if(gamepad1.x){
+            pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+            blinkinLedDriver.setPattern(pattern);
+        } else if (gamepad1.x){
+            pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+            blinkinLedDriver.setPattern(pattern);
+        }
 
         waitForStart();
 
