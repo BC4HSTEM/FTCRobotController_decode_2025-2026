@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.teamcode.mechanisms.Launcher;
@@ -56,16 +57,20 @@ public class AutoShootNear extends LinearOpMode {
          launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,new PIDFCoefficients(300, 0, 0, 10));
          leftFeeder = hardwareMap.get(CRServo.class,"grabber_left");
          rightFeeder = hardwareMap.get(CRServo.class, "grabber_right");
+
+       leftFeeder.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFeeder.setDirection(DcMotorSimple.Direction.REVERSE);
+
          leftFeeder.setPower(0);
          rightFeeder.setPower(0);
-         feederTime = 1000;
-         feederPause = 250;
+         feederTime = 250;
+         feederPause = 3500;
 
          shooter = new Launcher(telemetry, hardwareMap);
          shooter.init();
 
-         targetVelocity = 1496;
-         minVelocity=1446;
+         targetVelocity = 1490;
+         minVelocity=1480;
 
          telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
 
@@ -102,25 +107,41 @@ public class AutoShootNear extends LinearOpMode {
 
             // launch first ball
             sleep(1000);
-            setLauncher(1.0, 1.0);
+            //wait for velocity for the first ball
+            while (launcher.getVelocity() < minVelocity) {
+                telemetry.addData("Launch state", "checking velocity");
+                telemetry.update();
+            }
+            setLauncher(-1.0, 1.0);
             telemetry.addData("launch state","start launch");
+            telemetry.addData("launch velocity",launcher.getVelocity());
             telemetry.update();
 
             //launch second ball
             sleep(feederPause);
-            setLauncher(1.0, 1.0);
+            //wait for velocity for the second ball
+            while (launcher.getVelocity() < minVelocity) {
+                telemetry.addData("Launch state", "checking velocity");
+                telemetry.update();
+            }
+            setLauncher(-1.0, 1.0);
 
             //launch third ball
             sleep(feederPause);
-           setLauncher(1.0, 1.0);
+            //wait for velocity for the third ball
+            while (launcher.getVelocity() < minVelocity) {
+                telemetry.addData("Launch state", "checking velocity");
+                telemetry.update();
+            }
+           setLauncher(-1.0, 1.0);
 
 
-            sleep(700);
+            //sleep(700);
 
             // stop flywheel
-            launcher.setVelocity(0);
+            //launcher.setVelocity(0);
 
-            sleep(3000);
+            //sleep(3000);
 
             telemetry.addData("launch state","stop launch");
             telemetry.update();
@@ -129,14 +150,18 @@ public class AutoShootNear extends LinearOpMode {
     }
 
     private void setLauncher(double lFeederPower, double rFeederPower){
+        telemetry.addData("feeder","feeders called");
+        telemetry.update();
 
-        //launch third ball
-        if (launcher.getVelocity() > minVelocity) {
             leftFeeder.setPower(lFeederPower);
             rightFeeder.setPower(rFeederPower);
+            telemetry.addData("launch velocity",launcher.getVelocity());
+            telemetry.addData("feeder","feeders running");
+
+            telemetry.update();
             sleep(feederTime);
             leftFeeder.setPower(0);
             rightFeeder.setPower(0);
-        }
+
     }
 }

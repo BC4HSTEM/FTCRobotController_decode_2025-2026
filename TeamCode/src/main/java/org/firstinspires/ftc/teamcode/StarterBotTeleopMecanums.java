@@ -69,6 +69,8 @@ public class StarterBotTeleopMecanums extends OpMode {
     RevBlinkinLedDriver blinkinLedDriver;
     RevBlinkinLedDriver.BlinkinPattern pattern;
     public static double FEED_TIME_SECONDS = 0.20; //The feeder servos run this long when a shot is requested.
+
+    // public static double FEED_TIME_PAUSE = 0.20; //The feeder servos run this long when a shot is requested.
     public static double STOP_SPEED = 0.0; //We send this power to the servos when we want them to stop.
     public static double FULL_SPEED = 1.0;
 
@@ -81,7 +83,7 @@ public class StarterBotTeleopMecanums extends OpMode {
      * short launch zone"target velocity 1625""min velocity is 1275"
      */
     public static double MID_LAUNCHER_TARGET_VELOCITY = 1625;
-    public static double MID_LAUNCHER_MIN_VELOCITY = 1575;
+    public static double MID_LAUNCHER_MIN_VELOCITY = 1600;
 
     public static double CLOSE_LAUNCHER_TARGET_VELOCITY = 1500;
     public static double CLOSE_LAUNCHER_MIN_VELOCITY = 1400;
@@ -101,6 +103,10 @@ public class StarterBotTeleopMecanums extends OpMode {
     private boolean rightBumperPressed = false;
     private boolean leftBumperPressed = false;
 
+    private boolean continuous = false;
+    //private int shotCount = 0;
+    private int numShotsLaunched = 0;
+    private int numShotsRequested = 0;
 
     ElapsedTime feederTimer = new ElapsedTime();
 
@@ -145,6 +151,7 @@ public class StarterBotTeleopMecanums extends OpMode {
 
 
         blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        // pattern = RevBlinkinLedDriver.BlinkinPattern.
         pattern = RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES;
         blinkinLedDriver.setPattern(pattern);
         /*
@@ -205,7 +212,7 @@ public class StarterBotTeleopMecanums extends OpMode {
          * Much like our drivetrain motors, we set the left feeder servo to reverse so that they
          * both work to feed the ball into the robot.
          */
-        leftFeeder.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFeeder.setDirection(DcMotorSimple.Direction.REVERSE);
 
         /*
          * Tell the driver that initialization is complete.
@@ -251,6 +258,7 @@ public class StarterBotTeleopMecanums extends OpMode {
             launcher.setVelocity(launcherTargetVelocity);
         } else if (gamepad1.b) { // stop flywheel
             launcher.setVelocity(STOP_SPEED);
+            continuous = false;
         }
 
         /*
@@ -259,15 +267,28 @@ public class StarterBotTeleopMecanums extends OpMode {
          * Right Bumper: MID FIELD launch position
         */
         if (gamepad1.right_bumper){
+            continuous = false;
             launch(MID_LAUNCHER_TARGET_VELOCITY, MID_LAUNCHER_MIN_VELOCITY,gamepad1.right_bumper);
             launcherMinVelocity = MID_LAUNCHER_MIN_VELOCITY;
             launcherTargetVelocity = MID_LAUNCHER_TARGET_VELOCITY;
         }
-        else if (gamepad1.left_bumper){
+        else if (gamepad1.left_bumper) {
+            continuous = false;
             launch(CLOSE_LAUNCHER_TARGET_VELOCITY, CLOSE_LAUNCHER_MIN_VELOCITY, gamepad1.left_bumper);
             launcherMinVelocity = CLOSE_LAUNCHER_MIN_VELOCITY;
             launcherTargetVelocity = CLOSE_LAUNCHER_MIN_VELOCITY;
-        } else {
+        }
+        /*else if (gamepad1.a || continuous ){
+            continuous = shotCount != 3;
+            launch(MID_LAUNCHER_TARGET_VELOCITY, MID_LAUNCHER_MIN_VELOCITY,gamepad1.a);
+            //launchState = LaunchState.SPIN_UP;
+
+            launcherMinVelocity = MID_LAUNCHER_MIN_VELOCITY;
+            launcherTargetVelocity = MID_LAUNCHER_TARGET_VELOCITY;
+            shotCount++;
+
+
+        }*/ else {
             launch(launcherTargetVelocity, launcherMinVelocity, false);
         }
 
@@ -311,6 +332,7 @@ public class StarterBotTeleopMecanums extends OpMode {
             case IDLE:
                 if (shotRequested) {
                     launchState = LaunchState.SPIN_UP;
+                    // numShotsRequested = 3;
                 }
                 break;
             case SPIN_UP:
@@ -325,6 +347,8 @@ public class StarterBotTeleopMecanums extends OpMode {
                 leftFeeder.setPower(FULL_SPEED);
                 rightFeeder.setPower(FULL_SPEED);
                 feederTimer.reset();
+                numShotsLaunched++;
+
                 launchState = LaunchState.LAUNCHING;
                 telemetry.addData("launch speed",launcher.getVelocity());
                 telemetry.addData("launch speed target",targetVelocity);
@@ -334,11 +358,18 @@ public class StarterBotTeleopMecanums extends OpMode {
                 break;
             case LAUNCHING:
                 if (feederTimer.seconds() > FEED_TIME_SECONDS) {
-                    launchState = LaunchState.IDLE;
+
                     leftFeeder.setPower(STOP_SPEED);
                     rightFeeder.setPower(STOP_SPEED);
                     pattern = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
                     blinkinLedDriver.setPattern(pattern);
+
+                    if (numShotsLaunched < numShotsRequested) {
+                        launchState = LaunchState.SPIN_UP;
+                    } else {
+                        launchState = LaunchState.IDLE;
+                        numShotsLaunched = 0;
+                    }
                 }
                 break;
         }
