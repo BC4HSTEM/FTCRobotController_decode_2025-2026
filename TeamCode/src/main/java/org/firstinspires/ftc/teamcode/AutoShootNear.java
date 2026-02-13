@@ -34,6 +34,11 @@ public class AutoShootNear extends LinearOpMode {
     public static int feederTime;
     public static int feederPause;
 
+    public static int flywheelP = 300;
+    public static int flywheelI = 0;
+    public static int flywheelD = 0;
+    public static int flywheelF = 10;
+
     private Launcher shooter;
 
     @Override
@@ -51,28 +56,28 @@ public class AutoShootNear extends LinearOpMode {
         drivePower = 0.2;
 
         //set up launchers
-         launcher = hardwareMap.get(DcMotorEx.class, "launcher");
-         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-         launcher.setZeroPowerBehavior(BRAKE);
-         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,new PIDFCoefficients(300, 0, 0, 10));
-         leftFeeder = hardwareMap.get(CRServo.class,"grabber_left");
-         rightFeeder = hardwareMap.get(CRServo.class, "grabber_right");
+        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        launcher.setZeroPowerBehavior(BRAKE);
+        launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,new PIDFCoefficients(flywheelP, flywheelI, flywheelD, flywheelF));
+        leftFeeder = hardwareMap.get(CRServo.class,"grabber_left");
+        rightFeeder = hardwareMap.get(CRServo.class, "grabber_right");
 
-       leftFeeder.setDirection(DcMotorSimple.Direction.REVERSE);
+        // leftFeeder.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFeeder.setDirection(DcMotorSimple.Direction.REVERSE);
 
-         leftFeeder.setPower(0);
-         rightFeeder.setPower(0);
-         feederTime = 250;
-         feederPause = 3500;
+        leftFeeder.setPower(0);
+        rightFeeder.setPower(0);
+        feederTime = 250;
+        feederPause = 3500;
 
-         shooter = new Launcher(telemetry, hardwareMap);
-         shooter.init();
+        shooter = new Launcher(telemetry, hardwareMap);
+        shooter.init();
 
-         targetVelocity = 1490;
-         minVelocity=1480;
+        targetVelocity = 1490;
+        minVelocity=1485;
 
-         telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
+        telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
 
         blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
@@ -85,6 +90,7 @@ public class AutoShootNear extends LinearOpMode {
         }
 
         waitForStart();
+
 
         if (opModeIsActive()) {
 
@@ -106,19 +112,20 @@ public class AutoShootNear extends LinearOpMode {
             launcher.setVelocity(targetVelocity);
 
             // launch first ball
-            sleep(1000);
             //wait for velocity for the first ball
             while (launcher.getVelocity() < minVelocity) {
                 telemetry.addData("Launch state", "checking velocity");
                 telemetry.update();
             }
             setLauncher(-1.0, 1.0);
+
+            sleep(feederTime);
+
             telemetry.addData("launch state","start launch");
             telemetry.addData("launch velocity",launcher.getVelocity());
             telemetry.update();
 
             //launch second ball
-            sleep(feederPause);
             //wait for velocity for the second ball
             while (launcher.getVelocity() < minVelocity) {
                 telemetry.addData("Launch state", "checking velocity");
@@ -126,14 +133,17 @@ public class AutoShootNear extends LinearOpMode {
             }
             setLauncher(-1.0, 1.0);
 
+            sleep(feederTime);
+
             //launch third ball
-            sleep(feederPause);
             //wait for velocity for the third ball
             while (launcher.getVelocity() < minVelocity) {
                 telemetry.addData("Launch state", "checking velocity");
                 telemetry.update();
             }
-           setLauncher(-1.0, 1.0);
+            setLauncher(-1.0, 1.0);
+
+            sleep(feederTime);
 
 
             //sleep(700);
@@ -153,15 +163,15 @@ public class AutoShootNear extends LinearOpMode {
         telemetry.addData("feeder","feeders called");
         telemetry.update();
 
-            leftFeeder.setPower(lFeederPower);
-            rightFeeder.setPower(rFeederPower);
-            telemetry.addData("launch velocity",launcher.getVelocity());
-            telemetry.addData("feeder","feeders running");
+        leftFeeder.setPower(lFeederPower);
+        rightFeeder.setPower(rFeederPower);
+        telemetry.addData("launch velocity",launcher.getVelocity());
+        telemetry.addData("feeder","feeders running");
 
-            telemetry.update();
-            sleep(feederTime);
-            leftFeeder.setPower(0);
-            rightFeeder.setPower(0);
+        telemetry.update();
+        sleep(feederTime);
+        leftFeeder.setPower(0);
+        rightFeeder.setPower(0);
 
     }
 }
