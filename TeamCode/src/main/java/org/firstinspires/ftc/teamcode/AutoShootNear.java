@@ -110,6 +110,7 @@ public class AutoShootNear extends LinearOpMode {
 
             // start flywheel
             launcher.setVelocity(targetVelocity);
+            sleep(feederPause);
 
             // launch first ball
             //wait for velocity for the first ball
@@ -119,11 +120,14 @@ public class AutoShootNear extends LinearOpMode {
             }
             setLauncher(-1.0, 1.0);
 
-            sleep(feederTime);
+            sleep(feederPause);
 
             telemetry.addData("launch state","start launch");
             telemetry.addData("launch velocity",launcher.getVelocity());
             telemetry.update();
+
+
+            sleep(feederPause);
 
             //launch second ball
             //wait for velocity for the second ball
@@ -133,7 +137,7 @@ public class AutoShootNear extends LinearOpMode {
             }
             setLauncher(-1.0, 1.0);
 
-            sleep(feederTime);
+            sleep(feederPause);
 
             //launch third ball
             //wait for velocity for the third ball
